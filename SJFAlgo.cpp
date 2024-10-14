@@ -1,5 +1,4 @@
 #include <iostream>
-#include <algorithm>
 #include <queue>
 using namespace std;
 
@@ -123,6 +122,8 @@ int main () {
     for (int i = 0; i < 5; i++) {
         cout << processArr[i];
     }
+
+    findAverageTime(5,processArr);
 
     cout << "\nCPU exited at " << clk;
 

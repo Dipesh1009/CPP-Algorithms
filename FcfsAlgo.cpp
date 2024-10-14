@@ -1,5 +1,4 @@
 #include <iostream>
-#include <algorithm>
 #include <queue>
 using namespace std;
 
@@ -65,8 +64,13 @@ bool compareByArrivalTime(Process &p1, Process &p2) {
 }
 
 int main () {
+    auto compareByArrival = [] (Process *p1, Process *p2) -> bool {
+        return p1->getAT() > p2->getAT();
+    };
+    
     int clk = 0;
-    queue<Process*> readyQ;
+    
+    priority_queue<Process*, vector<Process*>, decltype(compareByArrival)> readyQ(compareByArrival);
     Process processArr[5] = {
         Process("P0",6,2),
         Process("P1",4,1),
@@ -74,18 +78,17 @@ int main () {
         Process("P3",2,3),
         Process("P4",3,4)
     };
-    sort(processArr, processArr+5, compareByArrivalTime);
 
     for (int i = 0; i < 5; i++) {
         readyQ.push(&processArr[i]);
     }
 
     while (!readyQ.empty()) {
-        if( clk >= readyQ.front()->getAT()) {
-            readyQ.front()->setResponseTime(clk);
-            clk += readyQ.front()->getBT();
-            readyQ.front()->setTurnAroundTime(clk);
-            readyQ.front()->setWaitingTime();
+        if( clk >= readyQ.top()->getAT()) {
+            readyQ.top()->setResponseTime(clk);
+            clk += readyQ.top()->getBT();
+            readyQ.top()->setTurnAroundTime(clk);
+            readyQ.top()->setWaitingTime();
             readyQ.pop();
         }
         else {
@@ -96,6 +99,8 @@ int main () {
     for (int i = 0; i < 5; i++) {
         cout << processArr[i];
     }
+
+    findAverageTime(5,processArr);
 
     cout << "\nCPU exited at " << clk;
 
