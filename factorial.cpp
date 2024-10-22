@@ -2,13 +2,11 @@
 using namespace std;
 
 int findFactorial(int num) {
-    if (num == 0){
+    if (num == 0)
         return 1;
-    }
     int fact = 1;
-    for (int i = 2; i <= num; i++){
+    for (int i = 2; i <= num; i++)
         fact *= i;
-    }
     return fact;
 }
 
