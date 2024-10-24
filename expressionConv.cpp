@@ -1,27 +1,7 @@
 #include <iostream>
-#include <cstdlib>
+#include <stack>
 #include <string>
 using namespace std;
-
-void pushOperator(char op, int& top, char *opStack)
-{
-    if (top == 9) {
-        cout << "Operator Stack is full\n";
-        return;
-    }
-    top++;
-    opStack[top] = op;
-    return;
-}
-
-char popOperator (int& top, char *opStack) {
-    if (top == -1) {
-        cout << "Operator stack is empty";
-        return '\0';
-    }
-    top--;
-    return opStack[top+1];
-}
 
 int precedence (char c) {
     if (c == '+' || c == '-') {
@@ -48,8 +28,7 @@ string reverseString(const string &exp) {
 }
 
 string infixToPostfix(const string &infix) {
-    char op[10];
-    int top = -1;
+    stack<char> op;
     string postfix;
 
     for (char ch: infix) {
@@ -58,31 +37,70 @@ string infixToPostfix(const string &infix) {
             postfix += ch;
         }
         else if (ch == '(') {
-            pushOperator (ch, top, op);
+            op.push('(');
         }
         else if ( ch == ')') {
-            while (top > -1 && op[top] != '(') {
-                postfix += popOperator(top, op);
+            while (!op.empty() && op.top() != '(') {
+                postfix += op.top();
+                op.pop();
             }
-            popOperator(top, op);
+            op.pop();
         }
         else {
-            while (top > -1 && precedence(op[top]) > precedence(ch)){
-                postfix += popOperator(top, op);
+            while (!op.empty() && precedence(op.top()) >= precedence(ch)){
+                postfix += op.top();
+                op.pop();
             }
-            pushOperator(ch, top, op);
+            op.push(ch);
         }
     }
-    while (top > -1) {
-        postfix += popOperator(top,op);
+    while (!op.empty()) {
+        postfix += op.top();
+        op.pop();
     }
 
     return postfix;
 }
 
+string postfixForPrefix(const string &infix) {
+    stack<char> op;
+    string postfix;
+
+    for (char ch: infix) {
+        
+        if (isalnum(ch)) {
+            postfix += ch;
+        }
+        else if (ch == '(') {
+            op.push('(');
+        }
+        else if ( ch == ')') {
+            while (!op.empty() && op.top() != '(') {
+                postfix += op.top();
+                op.pop();
+            }
+            op.pop();
+        }
+        else {
+            while (!op.empty() && precedence(op.top()) > precedence(ch)){
+                postfix += op.top();
+                op.pop();
+            }
+            op.push(ch);
+        }
+    }
+    while (!op.empty()) {
+        postfix += op.top();
+        op.pop();
+    }
+
+    return postfix;
+}
+
+
 string infixToPrefix(const string &infix) {
     string prefix = reverseString(infix);
-    prefix = infixToPostfix(prefix);
+    prefix = postfixForPrefix(prefix);
     return reverseString(prefix);
 }
 
@@ -112,7 +130,9 @@ int main() {
                     cout << "Postfix of Given Expression: " << infixToPostfix(exp);
                     break;
                 default: 
-                    cout << "Invalid Input";
+                    cout << "Invalid Input\n\nPress any key to continue";
+                    getchar();
+                    getchar();
                     goto choice;
             }
             getchar();

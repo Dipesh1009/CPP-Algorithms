@@ -1,5 +1,5 @@
 #include <iostream>
-#include <cstdlib>
+#include <stack>
 #include <string>
 using namespace std;
 
@@ -78,14 +78,16 @@ int precedence (char op) {
     }
 }
 
-int calculateExp(int *operand,char *opStack, int &topOperator, int &topOperand) {
+int calculateExp(stack<int> &operand,stack<char> &opStack) {
     int a, b, result;
-    b = popOperand(topOperand, operand);
-    a = popOperand(topOperand, operand);
-    if (opStack[topOperator] == ')') {
-        popOperator(topOperator, opStack);
+    
+    b = operand.top(); operand.pop();
+    a = operand.top(); operand.pop();
+
+    if (opStack.top() == ')') {
+        opStack.pop();
     }
-    char op = popOperator(topOperator, opStack);
+    char op = opStack.top(); opStack.pop();
 
     switch (op)
     {
@@ -111,9 +113,11 @@ int calculateExp(int *operand,char *opStack, int &topOperator, int &topOperand) 
 }
 
 int evaluateExp(const string &exp) {
-    char op[10], opbuffer;
-    int operand[10], topOperator = -1, topOperand = -1, buffer;
-    pushOperator('(',topOperator,op);
+    stack<char> op;
+    stack<int> operand;
+    char opbuffer;
+    int buffer;
+    op.push('(');
     for (int i = 0; i < exp.length(); i++) {
         if (exp[i] == ' ') {
             continue;
@@ -128,10 +132,10 @@ int evaluateExp(const string &exp) {
             }
             else if (opbuffer == ')') {
                  
-                while (op[topOperator] != '(') {
-                    buffer = calculateExp(operand, op, topOperator, topOperand);
+                while (op.top() != '(') {
+                    buffer = calculateExp(operand, op);
                     if (buffer != INT_MIN) {
-                        pushOperand(buffer, topOperand, operand);
+                        operand.push(buffer);
                     }
                     else {
                         cout << "Something went wrong!";
@@ -139,41 +143,41 @@ int evaluateExp(const string &exp) {
                     }
                 } 
                 
-                if (topOperator != 0 && op[topOperator] == '(') {
-                    popOperator(topOperator, op);
+                if (!op.empty() && op.top() == '(') {
+                    op.pop();
                 }
                 
                 if (isdigit(exp[i+1])) {
-                    pushOperator('*', topOperator, op);
+                    op.push('*');
                 }
                 continue;
             }
             else if (opbuffer == '(') {
                 if (isdigit(exp[i-1])){
-                    pushOperator('*', topOperator, op);
+                    op.push('*');
                 }
-                pushOperator(opbuffer, topOperator, op);
+                op.push(opbuffer);
             }
             else {
-                while ( topOperand != -1 && precedence(op[topOperand]) >= precedence (opbuffer))
+                while ( !op.empty() && precedence(op.top()) >= precedence (opbuffer))
                 {
-                        buffer = calculateExp(operand, op, topOperator, topOperand);
+                        buffer = calculateExp(operand, op);
                         if (buffer != INT_MIN) {
-                            pushOperand(buffer, topOperand, operand);
+                            operand.push(buffer);
                         }
                         else {
                             cout << "Something went wrong!";
                             return -1;
                         }                
                 }
-                pushOperator(opbuffer, topOperator, op);
+                op.push(opbuffer);
             }
         }
         else {
-            pushOperand(buffer, topOperand, operand);
+            operand.push(buffer);
         }
     }
-    return popOperand(topOperand, operand);
+    return operand.top();
 }
 
 int main() {
