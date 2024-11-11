@@ -3,46 +3,6 @@
 #include <string>
 using namespace std;
 
-void pushOperator(char op, int& top, char *opStack)
-{
-    if (top == 9) {
-        cout << "Operator Stack is full\n";
-        return;
-    }
-    top++;
-    opStack[top] = op;
-    return;
-}
-
-void pushOperand(int op, int& top, int *operand)
-{
-    if (top == 9) {
-        cout << "Operand stack is full\n";
-        return;
-    }
-    top++;
-    operand[top] = op;
-    return;
-}
-
-int popOperand (int& top, int *operand) {
-    if (top == -1) {
-        cout << "Stack is empty";
-        return -1;
-    }
-    top--;
-    return operand[top+1];
-}
-
-char popOperator (int& top, char *opStack) {
-    if (top == -1) {
-        cout << "Operator stack is empty";
-        return '\0';
-    }
-    top--;
-    return opStack[top+1];
-}
-
 int isNumber(const string& exp, int& i){
     string numS;
     if(isdigit(exp[i])) {
