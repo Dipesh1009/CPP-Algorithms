@@ -26,14 +26,16 @@ template <typename type> class LinkedList {
             avail->next = nullptr;
             return true;
         }
-        
+
         void insertFirstNode(type data) {
             newnode = avail;
             avail = avail->next;
             newnode->data = data;
             start = newnode;
+            start->next = start;
             return;
         }
+        
         void insertLast(type data) {
             if (!getMemory())
                 return;
@@ -45,8 +47,9 @@ template <typename type> class LinkedList {
                 newnode = avail;
                 avail = newnode->next;
                 newnode->data = data;
+                newnode->next = start;
                 struct Node <type>* p = start;
-                while (p->next != nullptr) {
+                while (p->next != start) {
                     p = p->next;
                 }
                 p->next = newnode;
@@ -61,7 +64,7 @@ template <typename type> class LinkedList {
             }
             struct Node <type>* p = start;
             while (p->data != position) {
-                if (p->next == nullptr){
+                if (p->next == start){
                     cout << "No Element found";
                     return;
                 }
@@ -69,6 +72,7 @@ template <typename type> class LinkedList {
             }
             if (!getMemory())
             {    return;    }
+
             newnode = avail;
             avail = newnode->next;
             newnode->data = data;
@@ -84,14 +88,18 @@ template <typename type> class LinkedList {
             if (position == start->data) {
                 insertFirst(data);  return;
             }
+
             struct Node <type> *p2 = start, *p1 = start;
             while (p1->data != position) {
-                if (p1->next == nullptr){
+                if (p1->next == start){
                     cout << "No Element found";
                     return;
                 }
                 p2 = p1;
                 p1 = p1->next;
+            }
+            if (p1 == start) {
+                insertFirst(data); return;
             }
             if (!getMemory())
             {    return;    }
@@ -99,7 +107,8 @@ template <typename type> class LinkedList {
             avail = newnode->next;
             newnode->data = data;
             newnode->next = p1;
-            p2->next = newnode;          
+            p2->next = newnode;    
+            return;      
         }
 
         void insertFirst(type data) {
@@ -114,9 +123,14 @@ template <typename type> class LinkedList {
                 avail = newnode->next;
                 newnode->data = data;
                 newnode->next = start;
+                struct Node <type>* p = start;
+                while (p->next != start) {
+                    p = p->next;
+                }
                 start = newnode;
+                p->next = start;
             }
-            
+            return;
         }
 
         void deleteFirst() {
@@ -124,9 +138,19 @@ template <typename type> class LinkedList {
                 cout << "list is empty";
                 return;
             }
-
             struct Node <type>* p = start;
-            start = start->next;
+            
+            if (p->next == start) {
+                start = nullptr;
+            }
+            else {
+                while (p->next != start) {
+                    p = p->next;
+                }
+                p->next = start->next;
+                p = start;
+                start = start->next;
+            }
             cout << "\nNode deleted: " << *p;
             free(p);
         }
@@ -137,13 +161,19 @@ template <typename type> class LinkedList {
                 return;
             }
 
-            struct Node <type> *p1 = start, *p2 = start;
-            while (p1->next != nullptr) {
-                p2 = p1;
-                p1 = p1->next;
+            struct Node <type> *p1 = start;
+            if (p1->next == start) {
+                start = nullptr;
             }
+            else {  
+                struct Node <type> *p2;
+                while (p1->next != start) {
+                    p2 = p1;
+                    p1 = p1->next;
+                }
 
-            p2->next = nullptr;
+                p2->next = start;
+            }
             cout << "\nNode deleted: " << *p1;
             free(p1);
         
@@ -154,13 +184,13 @@ template <typename type> class LinkedList {
                 cout << "list is empty";
                 return;
             }
-
             if (pos == start->data) {
                 deleteFirst(); return;
             }
+
             struct Node <type> *p2 = start, *p1 = start;
             while (p1->data != pos) {
-                if (p1->next == nullptr){
+                if (p1->next == start){
                     cout << "No Element found";
                     return;
                 }
@@ -173,17 +203,81 @@ template <typename type> class LinkedList {
             return;
         }
 
-        void traverse(){
+        void deleteBeforeDesired(type pos) {
             if (start == nullptr) {
                 cout << "list is empty";
                 return;
             }
 
+            if (pos == start->data) {
+                cout << "\nNo node attached before given node\n";
+                return;
+            }
+
+            if (pos == start->next->data) {
+                deleteFirst(); return;
+            }
+
+            struct Node <type> *p1 = start, *p2 = start;
+            while (p1->next->data != pos) {
+                if (p1->next == start){
+                    cout << "No Element found";
+                    return;
+                }
+                p2 = p1;
+                p1 = p1->next;
+            }
+
+            p2->next = p1->next;
+            
+            cout << "\nNode deleted: " << *p1;
+            free(p1);
+            return;
+        }
+
+        void deleteAfterDesired(type pos) {
+            if (start == nullptr) {
+                cout << "list is empty";
+                return;
+            }
+
+            struct Node <type> *p1 = start;
+            while (p1->data != pos) {
+                if (p1->next == start){
+                    cout << "No Element found";
+                    return;
+                }
+                p1 = p1->next;
+            }
+            if (p1 -> next == start) {
+                cout << "\nNo node available next to given node";
+                return;
+            }
+            struct Node <type> *p2 = p1->next;
+            p1->next = p2->next;
+            cout << "\nNode deleted: " << *p2;
+            free(p2);
+            return;
+        }
+
+        void traverse(){
+            if (start == nullptr) {
+                cout << "list is empty";
+                return;
+            }
+            bool flag = true;
             struct Node <type>* p = start;
-            while (p != nullptr){
+            do {
+                while (p->next != start){
+                    cout << *p;
+                    p = p->next;
+                }
                 cout << *p;
                 p = p->next;
-            }
+                cout << "\nDo you want to revisit? 1 for yes or 0 for no: ";
+                cin >> flag;
+            }while (flag);
+            return;
         }
 };
 
@@ -196,7 +290,7 @@ int main () {
         cout << "Linked List Menu\n";
 
         invalid:
-        cout << "\nEnter corresponding to execute functions: \n1 to Insert at last\n2 to Insert from Front\n3 to Insert after Desired position\n4 to Insert before Desired Position\n5 to Delete First Element\n6 to Delete Last Element\n7 to Delete at Desired Element\n8 to traverse\n0 to Exit\nEnter: ";
+        cout << "\nEnter corresponding to execute functions: \n1 to Insert at last\n2 to Insert from Front\n3 to Insert after Desired position\n4 to Insert before Desired Position\n5 to Delete First Element\n6 to Delete Last Element\n7 to Delete at Desired Element\n8 to Delete Before Desired Position\n9 to Delete After Desired Position\n10 to traverse\n0 to Exit\nEnter: ";
 
         cin >> flag;
         int data,pos;
@@ -246,7 +340,19 @@ int main () {
                 ll.deleteDesired(pos);
                 break;
 
-            case 8: 
+            case 8:
+                cout << "\nEnter Data Value of Position: ";
+                cin >> pos;
+                ll.deleteBeforeDesired(pos);
+                break;
+
+            case 9:
+                cout << "\nEnter Data Value of Position: ";
+                cin >> pos;
+                ll.deleteAfterDesired(pos);
+                break;
+
+            case 10: 
                 ll.traverse();
                 break;
 
