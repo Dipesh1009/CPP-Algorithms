@@ -14,14 +14,7 @@ template <typename type> class Queue {
         cout << "\nQueue is empty\n";
         return true;
     }
-
-    bool isFull() {
-        if (r != Max-1)
-            return false;
-        cout << "\nQueue is Full";
-        return true;
-    }
-
+    
     void enqueueFromRear() {
         if(r == Max-1) {
             cout << "Insertion from Rear is not available";
@@ -72,6 +65,7 @@ template <typename type> class Queue {
         if (isEmpty())
             return;
         cout << "\nFront of Queue: " << arr[f] << endl;
+        cout << "\nRear of Queue: " << arr[r] << endl;
     }
 
     void traverse() {
