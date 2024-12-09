@@ -2,13 +2,11 @@
 using namespace std;
 
 void swap(int &a, int &b) {
-    a = a+b;
-    b = a-b;
-    a = a-b;
+    int temp = a; a = b; b = temp;
     return;
 }
 
-void selectionSort(int *arr, int size) {
+void selectionSort(int arr[], int size) {
     int min;
     for (int i = 0; i < size; i++) {
         min = i;
@@ -17,9 +15,7 @@ void selectionSort(int *arr, int size) {
                 min = j;
             }
         }
-        if (min != i) {
-            swap(arr[min], arr[i]);
-        }
+        swap(arr[min], arr[i]);
     }
     return;
 }
