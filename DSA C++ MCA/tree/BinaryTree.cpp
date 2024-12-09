@@ -6,7 +6,7 @@ struct Node {
     struct Node *l = nullptr, *r = nullptr;
 
     friend ostream& operator << (ostream& os, struct Node& n) {
-        os << "\t" << n.data;
+        os << n.data << "\t";
         return os;
     }
 };
@@ -32,6 +32,7 @@ class Tree {
         }
         nn->data = data;
         p->l = nn;     
+        cout << "\n" << data << " is inserted at left of " << *p << endl;
     }
 
     void insertRight(struct Node *&p, int data) {
@@ -39,7 +40,8 @@ class Tree {
             return;
         }
         nn->data = data;
-        p->r = nn;     
+        p->r = nn;    
+        cout << "\n" << data << " is inserted at right of " << *p << endl; 
     }
     void insertRoot(struct Node *&p, int data) {
         if (!getMem()) {
@@ -47,6 +49,7 @@ class Tree {
         }
         nn->data = data;
         p = nn;
+        cout << "\n" << data << " is inserted at root node" << endl;
     }
 };
 
@@ -57,13 +60,15 @@ class BinaryTree {
     
     void insert (struct Node *&p, int data) {
         short flag;
-        system("cls");
         if (p == nullptr) {
             t.insertRoot(root,data);
         }
         else if (p->l != nullptr && p->r != nullptr) {
             JUMP:
-            cout << "Enter 1 to go left\n2 to go right\nAt node: " << p->data << "\nEnter your choice: "; cin >> flag;
+            system("cls");
+            cout << "At node: " << p->data << endl;
+            cout << "Enter 1 to go left\nEnter 2 to go right\n\nEnter your choice: "; 
+            cin >> flag;
             switch(flag) {
                 case 1:
                     insert(p->l,data);
@@ -78,7 +83,10 @@ class BinaryTree {
         }
         else if (p->l == nullptr && p->r == nullptr) {
             JUMP2:
-            cout << "Enter 1 to insert left\n2 to insert right\nAt node: " << p->data << "\nEnter your choice: "; cin >> flag;
+            system("cls");
+            cout << "At node: " << p->data << endl;
+            cout << "\nEnter 1 to insert left\nEnter 2 to insert right\n\nEnter your choice: "; 
+            cin >> flag;
             switch(flag) {
                 case 1:
                     t.insertLeft(p,data);
@@ -93,7 +101,8 @@ class BinaryTree {
         }
         else if (p->l == nullptr) {
             JUMP3:
-            cout << "At node: " << p->data << " left subtree is null, and right subtree exists\nEnter 1 to insert at left\nEnter 2 to go to right sub tree\nEnter: ";
+            system("cls");
+            cout << "At node: " << p->data << "\nLeft subtree is null, and Right subtree exists\n\nEnter 1 to insert at left\nEnter 2 to go to right sub tree\n\nEnter: ";
             cin >> flag;
             switch(flag) {
                 case 1: 
@@ -109,7 +118,8 @@ class BinaryTree {
         }
         else {
             JUMP4:
-            cout << "At node: " << p->data << " right subtree is null, and left subtree exists\nEnter 1 to go to left subtree\nEnter 2 to insert at right\nEnter: ";
+            system("cls");
+            cout << "At node: " << p->data << "\nRight subtree is null, and Left subtree exists\n\nEnter 1 to go to left subtree\nEnter 2 to insert at right\n\nEnter: ";
             cin >> flag;
             switch(flag) {
                 case 1: 
@@ -123,6 +133,7 @@ class BinaryTree {
                     goto JUMP4;
             }
         }
+        
         return;
     }
 
@@ -131,16 +142,13 @@ class BinaryTree {
             cout << "\nTree is empty\n";
             return;
         }
-        else if (p->l == nullptr) {
-            return;
-        } 
-        inorder(p->l);
-        cout << *p << "\t";
-        if (p->r == nullptr) {
-            return;
+        if(p->l != nullptr) {
+            inorder(p->l);
         }
-        inorder(p->r);
-
+        cout << *p;
+        if (p->r != nullptr) {
+            inorder(p->r);
+        }
     }
 
 };
@@ -152,21 +160,25 @@ int main()
     do {
         JUMP3:
         system("cls");
+        cout << "Binary Tree Menu";
         cout << "\n1 for insert\n2 for traverse\nEnter: ";
         cin >> flag;
         switch(flag) {
             case 1:
-                cout << "\nEnter: "; cin >> data;
+                cout << "\nEnter data to insert: "; cin >> data;
                 t.insert(t.root,data);
                 break;
             case 2:
+                cout << "\nTree Inorder Traversal:\n";
                 t.inorder(t.root);
-                getchar();getchar();
             case 0:
                 break;
             default:
+                cout << "\nInvalid input:(";
+                getchar(); getchar();
                 goto JUMP3;
         }
+        cout << "\nPress any key to continue:)";
         getchar(); getchar();
     } while(flag != 0);
     
