@@ -8,27 +8,29 @@ void swap(int &a, int &b) {
     return;
 }
 
-void check(int arr[], int i) {
-    if (arr[i] >= arr[i/2]){
+void maxHeapify(int arr[], int i) {
+    if (arr[i] <= arr[i/2]){
         return;
     }
-    if (arr[i] < arr[i/2]){
+    if (arr[i] > arr[i/2]){
         swap(arr[i],arr[i/2]);
-        check(arr,i/2);
+        maxHeapify(arr,i/2);
     }
     return;
 }
-void insertionSort(int *arr, int size) {
-
-    for (int i = 0; i < size; i++) {
-        check(arr,i);
+void heapSort(int arr[], int size) {
+    for (int n = size-1; n > 0; n--){
+        for (int i = 0; i <= n; i++) {
+            maxHeapify(arr,i);
+        }
+        swap(arr[0],arr[n]);
     }
     
 }
 
 int main () {
     int arr[10] = {10,2,4,7,3,1,5,8,6,9};
-    insertionSort(arr, 10);
+    heapSort(arr, 10);
     for (int i : arr) {
         cout << i << "\t";
     }
