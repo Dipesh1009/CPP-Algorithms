@@ -12,10 +12,8 @@ void maxHeapify(int arr[], int i) {
     if (arr[i] <= arr[i/2]){
         return;
     }
-    if (arr[i] > arr[i/2]){
-        swap(arr[i],arr[i/2]);
-        maxHeapify(arr,i/2);
-    }
+    swap(arr[i],arr[i/2]);
+    maxHeapify(arr,i/2);
     return;
 }
 void heapSort(int arr[], int size) {
